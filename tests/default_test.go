@@ -43,3 +43,12 @@ func TestService2(t *testing.T) {
 	res := es.DeleteEmp(7799)
 	fmt.Println(res)
 }
+
+func TestService3(t *testing.T) {
+	ds := service.NewDeptService()
+	depts := ds.SelectByDeptnoGetEmps(20)
+	fmt.Println(depts)
+	es := service.NewEmpService()
+	emps := es.SelectByEmpNoGetDept(7788)
+	fmt.Println(emps)
+}

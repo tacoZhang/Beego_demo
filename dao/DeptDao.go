@@ -74,3 +74,14 @@ func (d *DeptDao) DeleteDept(deptno int) bool {
 	thing.Commit()
 	return true
 }
+
+//根据deptno查询emp列表(一对多)
+func (d *DeptDao) SelectByDeptnoGetEmps(deptno int) *models.Dept {
+	dept := models.Dept{Deptno: deptno}
+	err := d.engine.First(&dept).Model(&dept.Emps).Find(&dept.Emps).Error
+	if err != nil {
+		panic(err.Error())
+		return nil
+	}
+	return &dept
+}

@@ -41,7 +41,8 @@ func ConnectMariaDB() {
 		db.DB().SetMaxOpenConns(2000) //设置最大闲置个数
 		db.SingularTable(true)        //表生成结尾不带s
 		// 启用Logger，显示详细日志
-		db.LogMode(true)
+		res, _ := beego.AppConfig.Bool("dbSQL")
+		db.LogMode(res)
 		beego.Info("Mysql had connected")
 		MariaConf = db
 	})

@@ -12,6 +12,7 @@ type EmpService interface {
 	InsertEmp(emp models.Emp) bool
 	UpdateEmp(emp models.Emp) bool
 	DeleteEmp(empno int) bool
+	SelectByEmpNoGetDept(empno int) *models.Emp
 }
 
 type empService struct {
@@ -42,4 +43,8 @@ func (s *empService) UpdateEmp(emp models.Emp) bool {
 
 func (s *empService) DeleteEmp(empno int) bool {
 	return s.dao.DeleteEmp(empno)
+}
+
+func (s *empService) SelectByEmpNoGetDept(empno int) *models.Emp {
+	return s.dao.SelectByEmpNoGetDept(empno)
 }

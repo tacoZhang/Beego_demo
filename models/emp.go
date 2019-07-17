@@ -14,8 +14,5 @@ type Emp struct {
 	Sal      float64
 	Comm     float64
 	Deptno   int
-}
-
-func (Emp) TableName() string {
-	return "emp"
+	Dept     Dept `gorm:"foreignkey:deptno"`
 }

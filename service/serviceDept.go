@@ -12,6 +12,7 @@ type deptService interface {
 	InsertDept(dept models.Dept) bool
 	UpdateDept(dept models.Dept) bool
 	DeleteDept(deptno int) bool
+	SelectByDeptnoGetEmps(deptno int) *models.Dept
 }
 
 type DeptService struct {
@@ -42,4 +43,8 @@ func (s *DeptService) UpdateDept(dept models.Dept) bool {
 
 func (s *DeptService) DeleteDept(deptno int) bool {
 	return s.dao.DeleteDept(deptno)
+}
+
+func (s *DeptService) SelectByDeptnoGetEmps(deptno int) *models.Dept {
+	return s.dao.SelectByDeptnoGetEmps(deptno)
 }
