@@ -36,3 +36,46 @@ func (e *EmpDao) SelectAll() *[]models.Emp {
 	}
 	return &list
 }
+
+//添加员工
+func (e *EmpDao) InsertEmp(emp models.Emp) bool {
+	thing := e.engine.Begin()
+	defer thing.Close()
+	err := thing.Create(&emp).Error
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error())
+		return false
+	}
+	thing.Commit()
+	return true
+}
+
+//修改员工信息
+func (e *EmpDao) UpdateEmp(emp models.Emp) bool {
+	thing := e.engine.Begin()
+	defer thing.Close()
+	err := thing.Save(&emp).Error //自动识别主键修改
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error())
+		return false
+	}
+	thing.Commit()
+	return true
+}
+
+//删除员工
+func (e *EmpDao) DeleteEmp(empno int) bool {
+	var emp models.Emp
+	thing := e.engine.Begin()
+	defer thing.Close()
+	err := thing.Where("empno=?", empno).Delete(&emp).Error
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error())
+		return false
+	}
+	thing.Commit()
+	return true
+}

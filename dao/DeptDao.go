@@ -34,3 +34,43 @@ func (d *DeptDao) SelectAll() *[]models.Dept {
 	}
 	return &list
 }
+
+func (d *DeptDao) InsertDept(dept models.Dept) bool {
+	thing := d.engine.Begin()
+	defer thing.Close()
+	err := thing.Create(&dept).Error
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error())
+		return false
+	}
+	thing.Commit()
+	return true
+}
+
+func (d *DeptDao) UpdateDept(dept models.Dept) bool {
+	thing := d.engine.Begin()
+	defer thing.Close()
+	err := thing.Save(&dept).Error
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error())
+		return false
+	}
+	thing.Commit()
+	return true
+}
+
+func (d *DeptDao) DeleteDept(deptno int) bool {
+	thing := d.engine.Begin()
+	defer thing.Close()
+	var dept models.Dept
+	err := thing.Where("deptno=?", deptno).Delete(&dept)
+	if err != nil {
+		thing.Rollback()
+		panic(err.Error)
+		return false
+	}
+	thing.Commit()
+	return true
+}

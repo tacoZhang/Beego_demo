@@ -2,14 +2,13 @@ package test
 
 import (
 	"fmt"
+	"github.com/astaxie/beego"
 	"my_blog/Db"
 	_ "my_blog/routers"
 	"my_blog/service"
 	"path/filepath"
 	"runtime"
 	"testing"
-
-	"github.com/astaxie/beego"
 )
 
 func init() {
@@ -28,4 +27,19 @@ func TestService(t *testing.T) {
 	ds := service.NewDeptService()
 	result := ds.SelectAll()
 	fmt.Println(result)
+}
+
+func TestService2(t *testing.T) {
+	es := service.NewEmpService()
+	//emp:=models.Emp{
+	//	Empno:7799,
+	//	Ename:"Jack",
+	//	Mgr:7788,
+	//	Job:"CLERK",
+	//	Hiredate:time.Now(),
+	//	Sal:1200,
+	//	Deptno:20,
+	//}
+	res := es.DeleteEmp(7799)
+	fmt.Println(res)
 }
