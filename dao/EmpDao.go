@@ -2,6 +2,7 @@ package dao
 
 import (
 	"github.com/jinzhu/gorm"
+	"my_blog/log"
 	"my_blog/models"
 )
 
@@ -20,7 +21,7 @@ func (e *EmpDao) SelectByPId(Pid int) *models.Emp {
 	var emp = models.Emp{}
 	err := e.engine.First(&emp, Pid).Error
 	if err != nil {
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return nil
 	}
 	return &emp
@@ -31,7 +32,7 @@ func (e *EmpDao) SelectAll() *[]models.Emp {
 	var list []models.Emp
 	err := e.engine.Find(&list).Error
 	if err != nil {
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return nil
 	}
 	return &list
@@ -40,11 +41,10 @@ func (e *EmpDao) SelectAll() *[]models.Emp {
 //添加员工
 func (e *EmpDao) InsertEmp(emp models.Emp) bool {
 	thing := e.engine.Begin()
-	defer thing.Close()
 	err := thing.Create(&emp).Error
 	if err != nil {
 		thing.Rollback()
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return false
 	}
 	thing.Commit()
@@ -54,11 +54,10 @@ func (e *EmpDao) InsertEmp(emp models.Emp) bool {
 //修改员工信息
 func (e *EmpDao) UpdateEmp(emp models.Emp) bool {
 	thing := e.engine.Begin()
-	defer thing.Close()
 	err := thing.Save(&emp).Error //自动识别主键修改
 	if err != nil {
 		thing.Rollback()
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return false
 	}
 	thing.Commit()
@@ -69,11 +68,10 @@ func (e *EmpDao) UpdateEmp(emp models.Emp) bool {
 func (e *EmpDao) DeleteEmp(empno int) bool {
 	var emp models.Emp
 	thing := e.engine.Begin()
-	defer thing.Close()
 	err := thing.Where("empno=?", empno).Delete(&emp).Error
 	if err != nil {
 		thing.Rollback()
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return false
 	}
 	thing.Commit()
@@ -85,7 +83,7 @@ func (d *EmpDao) SelectByEmpNoGetDept(empno int) *models.Emp {
 	data := models.Emp{Empno: empno}
 	err := d.engine.First(&data).Model(&data.Dept).First(&data.Dept).Error
 	if err != nil {
-		panic(err.Error())
+		log.DaoLogger.Error(err.Error())
 		return nil
 	}
 	return &data
