@@ -40,6 +40,9 @@ func (this *EmpController) GetOne() {
 	var data EmpPid
 	var out DataResponse
 	defer func() {
+		if out.Data == nil {
+			out.Data = ""
+		}
 		this.Data["json"] = out
 		this.ServeJSON()
 	}()
@@ -74,6 +77,9 @@ func (this *EmpController) GetEmp() {
 	var data EmpPid
 	var out DataResponse
 	defer func() {
+		if out.Data == nil {
+			out.Data = ""
+		}
 		this.Data["json"] = out
 		this.ServeJSON()
 	}()
@@ -107,6 +113,9 @@ func (this *EmpController) InsertEmp() {
 	var data AddEmp
 	var out DataResponse
 	defer func() {
+		if out.Data == nil {
+			out.Data = ""
+		}
 		this.Data["json"] = out
 		this.ServeJSON()
 	}()
@@ -145,4 +154,93 @@ func (this *EmpController) InsertEmp() {
 		out.Msg = "添加失败"
 		return
 	}
+}
+
+// @Title 更新Emp
+// @router /update [post]
+func (this *EmpController) UpdateEmp() {
+	var data UpdateEmp
+	var out DataResponse
+	defer func() {
+		if out.Data == nil {
+			out.Data = ""
+		}
+		this.Data["json"] = out
+		this.ServeJSON()
+	}()
+	reqByte := this.Ctx.Input.RequestBody
+	err := json.Unmarshal(reqByte, &data)
+	if err != nil {
+		log.ControllerLogger.Error("Json解析错误", err.Error())
+		out.Code = -1
+		out.Msg = "Json解析错误"
+		return
+	}
+
+	es := service.NewEmpService()
+	empno, _ := strconv.Atoi(data.Empno)
+	emp := es.SelectByPId(empno)
+	if emp == nil {
+		log.ControllerLogger.Error("查询Emp失败")
+		out.Code = -1
+		out.Msg = "查寻Emp失败"
+		return
+	}
+
+	mgr, _ := strconv.Atoi(data.Mgr)
+	sal, _ := strconv.ParseFloat(data.Sal, 64)
+	comm, _ := strconv.ParseFloat(data.Comm, 64)
+	deptno, _ := strconv.Atoi(data.Deptno)
+	emp.Job = data.Job
+	emp.Mgr = mgr
+	emp.Sal = sal
+	emp.Comm = comm
+	emp.Deptno = deptno
+	result := es.UpdateEmp(*emp)
+	if !result {
+		log.ControllerLogger.Error("Emp更新失败")
+		out.Code = -1
+		out.Msg = "Emp更新失败"
+		return
+	}
+
+	out.Code = 200
+	out.Msg = "更新成功"
+	return
+}
+
+// @Title 删除Emp
+// @router /del [post]
+func (this *EmpController) DelEmp() {
+	var data EmpPid
+	var out DataResponse
+	defer func() {
+		if out.Data == nil {
+			out.Data = ""
+		}
+		this.Data["json"] = out
+		this.ServeJSON()
+	}()
+	reqByte := this.Ctx.Input.RequestBody
+	err := json.Unmarshal(reqByte, &data)
+	if err != nil {
+		log.ControllerLogger.Error("Json解析错误", err.Error())
+		out.Code = -1
+		out.Msg = "Json解析错误"
+		return
+	}
+
+	es := service.NewEmpService()
+	empno, _ := strconv.Atoi(data.Empno)
+	res := es.DeleteEmp(empno)
+	if !res {
+		log.ControllerLogger.Error("Emp删除失败")
+		out.Msg = "删除失败"
+		out.Code = -1
+		return
+	}
+
+	out.Code = 200
+	out.Msg = "删除成功"
+	return
 }
